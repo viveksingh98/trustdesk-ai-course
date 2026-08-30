@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: trustdesk
+  ai:
+    openai:
+      # Set the real key in your environment; never commit it.
+      #   export OPENAI_API_KEY=sk-...
+      # The placeholder keeps the application context bootable before
+      # you configure a key (no request is sent until the agent runs).
+      api-key: ${OPENAI_API_KEY:demo-placeholder}
