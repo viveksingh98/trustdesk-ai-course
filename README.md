@@ -74,4 +74,4 @@ Stay on `main` for your own work; use checkpoints for reference and recovery.
 The checkpoint list grows with the course; each new section's lecture tells
 you exactly which branch to use.
 
-— Vivek Singh · [Prompt Vidya](https://www.youtube.com/@PromptVidya)
+— Vivek Singh · [Prompt Vidya AI](https://www.youtube.com/@PromptVidyaAI)
