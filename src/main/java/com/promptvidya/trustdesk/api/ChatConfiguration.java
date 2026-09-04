@@ -2,6 +2,7 @@ package com.promptvidya.trustdesk.api;
 
 import com.promptvidya.trustdesk.chat.ChatService;
 import com.promptvidya.trustdesk.memory.ConversationMemory;
+import com.promptvidya.trustdesk.prompt.SupportPromptTemplate;
 import com.promptvidya.trustdesk.resilience.GuardedModelCall;
 import java.time.Duration;
 import org.springframework.ai.chat.client.ChatClient;
@@ -25,5 +26,10 @@ public class ChatConfiguration {
     @Bean
     GuardedModelCall guardedModelCall() {
         return new GuardedModelCall(2, Duration.ofSeconds(20));
+    }
+
+    @Bean
+    SupportPromptTemplate supportPromptTemplate() {
+        return new SupportPromptTemplate();
     }
 }

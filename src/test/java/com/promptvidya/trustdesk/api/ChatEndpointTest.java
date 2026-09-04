@@ -21,13 +21,13 @@ class ChatEndpointTest {
     private final ChatService chat = mock(ChatService.class);
     private final ConversationMemory memory = new ConversationMemory(10);
     private final GuardedModelCall guard = new GuardedModelCall(2, Duration.ofSeconds(2));
-    private final ChatEndpoint endpoint = new ChatEndpoint(chat, memory, guard);
+    private final ChatEndpoint endpoint = new ChatEndpoint(chat, memory, guard, new com.promptvidya.trustdesk.prompt.SupportPromptTemplate());
     private final TestingAuthenticationToken alice =
             new TestingAuthenticationToken("alice", "n/a", "ROLE_EMPLOYEE");
 
     @Test
     void answersAreReturnedAndRemembered() {
-        when(chat.chat(eq("reset my token"), anyList()))
+        when(chat.chat(org.mockito.ArgumentMatchers.contains("reset my token"), anyList()))
                 .thenReturn("Use the self-service portal.");
 
         var response = endpoint.chat(new ChatRequest("reset my token"), alice);
@@ -42,7 +42,7 @@ class ChatEndpointTest {
         when(chat.chat(any(), anyList())).thenReturn("noted");
         endpoint.chat(new ChatRequest("first question"), alice);
 
-        when(chat.chat(eq("second"), eq(memory.history("alice")))).thenReturn("second answer");
+        when(chat.chat(org.mockito.ArgumentMatchers.contains("second"), eq(memory.history("alice")))).thenReturn("second answer");
         var response = endpoint.chat(new ChatRequest("second"), alice);
 
         assertThat(response.reply()).isEqualTo("second answer");

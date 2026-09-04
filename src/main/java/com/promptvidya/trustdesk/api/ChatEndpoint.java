@@ -3,6 +3,7 @@ package com.promptvidya.trustdesk.api;
 import com.promptvidya.trustdesk.chat.ChatService;
 import com.promptvidya.trustdesk.memory.ConversationMemory;
 import com.promptvidya.trustdesk.memory.ConversationMemory.Turn;
+import com.promptvidya.trustdesk.prompt.SupportPromptTemplate;
 import com.promptvidya.trustdesk.resilience.GuardedModelCall;
 import com.promptvidya.trustdesk.resilience.GuardedModelCall.Outcome;
 import jakarta.validation.Valid;
@@ -28,11 +29,14 @@ public class ChatEndpoint {
     private final ChatService chat;
     private final ConversationMemory memory;
     private final GuardedModelCall guard;
+    private final SupportPromptTemplate promptTemplate;
 
-    public ChatEndpoint(ChatService chat, ConversationMemory memory, GuardedModelCall guard) {
+    public ChatEndpoint(ChatService chat, ConversationMemory memory, GuardedModelCall guard,
+            SupportPromptTemplate promptTemplate) {
         this.chat = Objects.requireNonNull(chat);
         this.memory = Objects.requireNonNull(memory);
         this.guard = Objects.requireNonNull(guard);
+        this.promptTemplate = Objects.requireNonNull(promptTemplate);
     }
 
     @PostMapping("/chat")
@@ -40,7 +44,8 @@ public class ChatEndpoint {
             @Valid @RequestBody ChatRequest request, Authentication authentication) {
         var subject = authentication.getName();
         var history = memory.history(subject);
-        var outcome = guard.call(() -> chat.chat(request.message(), history));
+        var prompt = promptTemplate.render(request.message());
+        var outcome = guard.call(() -> chat.chat(prompt, history));
         return switch (outcome) {
             case Outcome.Answer answer -> {
                 memory.append(subject, new Turn(request.message(), answer.text()));
