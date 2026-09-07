@@ -8,6 +8,22 @@ spring:
       # The placeholder keeps the application context bootable before
       # you configure a key (no request is sent until the agent runs).
       api-key: ${OPENAI_API_KEY:demo-placeholder}
+    mcp:
+      server:
+        name: trustdesk-mcp
+        version: 1.0.0
+        type: SYNC
+        protocol: STREAMABLE
+        request-timeout: 20s
+        capabilities:
+          tool: true
+          resource: false
+          prompt: false
+          completion: false
+        streamable-http:
+          mcp-endpoint: /mcp
+      client:
+        enabled: false
 logging:
   level:
     # The startup INFO lines log under the application/test class loggers
