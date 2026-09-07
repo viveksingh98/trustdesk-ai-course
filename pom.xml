@@ -12,10 +12,10 @@
     </parent>
 
     <groupId>com.promptvidya</groupId>
-    <artifactId>trustdesk</artifactId>
+    <artifactId>trustdesk-demo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>TrustDesk</name>
-    <description>Secure AI Agents with Java &amp; Spring Boot — course project</description>
+    <name>TrustDesk Demo</name>
+    <description>Minimal secure tool-calling teaching slice</description>
 
     <properties>
         <java.version>25</java.version>
@@ -61,6 +61,22 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
+        </dependency>
+            <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-vector-store</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-vector-store-advisor</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-rag</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-markdown-document-reader</artifactId>
         </dependency>
     </dependencies>
 

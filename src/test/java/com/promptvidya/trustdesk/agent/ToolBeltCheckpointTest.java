@@ -21,7 +21,9 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.model.ToolContext;
+import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.ai.support.ToolCallbacks;
 import org.springframework.security.access.AccessDeniedException;
@@ -99,10 +101,16 @@ class ToolBeltCheckpointTest {
                 return new ChatResponse(List.of(new Generation(
                         AssistantMessage.builder().content("").toolCalls(List.of(call)).build())));
             }
+
+            @Override
+            public ChatOptions getOptions() {
+                return ToolCallingChatOptions.builder().build();
+            }
         };
+        var loop = new BoundedToolLoop(2);
         var advisor = ToolCallingAdvisor.builder()
                 .toolCallingManager(ToolCallingManager.builder().build())
-                .toolExecutionEligibilityChecker(new BoundedToolLoop(2))
+                .toolExecutionEligibilityChecker(loop)
                 .build();
 
         var response = ChatClient.create(relentless).prompt()
@@ -114,6 +122,7 @@ class ToolBeltCheckpointTest {
                 .chatResponse();
 
         assertThat(response).isNotNull();
-        assertThat(invocations.get()).isLessThanOrEqualTo(4);
+        assertThat(invocations.get()).isEqualTo(loop.maximumRounds() + 1);
+        assertThat(loop.stopReason()).isEqualTo(BoundedToolLoop.StopReason.BOUND_HIT);
     }
 }

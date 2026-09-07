@@ -8,3 +8,15 @@ spring:
       # The placeholder keeps the application context bootable before
       # you configure a key (no request is sent until the agent runs).
       api-key: ${OPENAI_API_KEY:demo-placeholder}
+logging:
+  level:
+    # The startup INFO lines log under the application/test class loggers
+    # and print the working directory, which the capture pipeline's
+    # proof-stream scanner rejects as a private path. Suppress only those
+    # two loggers so sibling INFO events (like the audit log) stay alive.
+    com.promptvidya.trustdesk.TrustDeskApplication: WARN
+    com.promptvidya.trustdesk.TrustDeskApplicationTests: WARN
+    # The generated dev password line would trip the capture pipeline's
+    # credential scanner on proof streams; the student repository keeps the
+    # default so learners see the expected development-password notice.
+    org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration: ERROR

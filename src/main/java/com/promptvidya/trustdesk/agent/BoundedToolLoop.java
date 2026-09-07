@@ -12,8 +12,19 @@ import org.springframework.ai.model.tool.ToolExecutionEligibilityChecker;
  */
 public final class BoundedToolLoop implements ToolExecutionEligibilityChecker {
 
+    /**
+     * Every exit from the loop has a name a dashboard can count: the model
+     * stopped asking on its own, or the bound cut it off.
+     */
+    public enum StopReason {
+        STILL_RUNNING,
+        NATURAL_STOP,
+        BOUND_HIT
+    }
+
     private final int maximumRounds;
     private final AtomicInteger observedRounds = new AtomicInteger();
+    private volatile StopReason stopReason = StopReason.STILL_RUNNING;
 
     public BoundedToolLoop(int maximumRounds) {
         if (maximumRounds < 1) {
@@ -25,9 +36,18 @@ public final class BoundedToolLoop implements ToolExecutionEligibilityChecker {
     @Override
     public Boolean apply(ChatResponse response) {
         if (response == null || !response.hasToolCalls()) {
+            stopReason = StopReason.NATURAL_STOP;
             return false;
         }
-        return observedRounds.incrementAndGet() <= maximumRounds;
+        if (observedRounds.incrementAndGet() > maximumRounds) {
+            stopReason = StopReason.BOUND_HIT;
+            return false;
+        }
+        return true;
+    }
+
+    public StopReason stopReason() {
+        return stopReason;
     }
 
     public int observedRounds() {
@@ -39,6 +59,6 @@ public final class BoundedToolLoop implements ToolExecutionEligibilityChecker {
     }
 
     public boolean boundWasHit() {
-        return observedRounds.get() > maximumRounds;
+        return stopReason == StopReason.BOUND_HIT;
     }
 }
