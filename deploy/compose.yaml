@@ -1,0 +1,83 @@
+# TrustDesk in production shape: the agent is reachable only through the
+# edge proxy, can reach the internet only through the egress proxy, runs
+# read-only without capabilities, and receives every secret as a file.
+name: trustdesk
+
+services:
+  edge:
+    image: caddy:2-alpine
+    ports:
+      - "443:443"
+    volumes:
+      - ./edge/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+    networks:
+      - edge
+      - internal
+    depends_on:
+      trustdesk:
+        condition: service_healthy
+
+  trustdesk:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      TRUSTDESK_SECRETS_DIRECTORY: /run/secrets
+      HTTPS_PROXY: http://egress:3128
+      NO_PROXY: localhost,127.0.0.1
+    secrets:
+      - openai-api-key
+      - jwt-private-key
+      - jwt-public-key
+    networks:
+      - internal
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+          cpus: "2"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/actuator/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 40s
+
+  egress:
+    image: ubuntu/squid:6.6-24.04_beta
+    volumes:
+      - ./egress/squid.conf:/etc/squid/squid.conf:ro
+    networks:
+      - internal
+      - outbound
+    read_only: true
+    tmpfs:
+      - /var/run
+      - /var/spool/squid
+      - /var/log/squid
+
+networks:
+  edge:
+  internal:
+    internal: true
+  outbound:
+
+secrets:
+  openai-api-key:
+    file: ./secrets/openai-api-key
+  jwt-private-key:
+    file: ./secrets/jwt-private-key
+  jwt-public-key:
+    file: ./secrets/jwt-public-key
+
+volumes:
+  caddy-data:

@@ -1,0 +1,37 @@
+# Production profile: no defaults that only make sense on a laptop.
+# Every secret arrives from the environment or a vault; nothing here
+# has a fallback value, so a missing secret fails at startup instead
+# of running with a placeholder.
+spring:
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+    chat:
+      observations:
+        log-prompt: false
+        log-completion: false
+    tools:
+      observations:
+        include-content: false
+trustdesk:
+  security:
+    dev-password: ""
+    dev-keys:
+      enabled: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: never
+server:
+  forward-headers-strategy: framework
+  error:
+    include-message: never
+    include-stacktrace: never
+logging:
+  level:
+    root: WARN
+    com.promptvidya.trustdesk: INFO
