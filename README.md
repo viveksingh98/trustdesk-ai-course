@@ -66,12 +66,29 @@ Stay on `main` for your own work; use checkpoints for reference and recovery.
 
 ## Section map
 
-| Section | Focus | Checkpoint |
-| --- | --- | --- |
-| SEC-01 | Threat model & the TrustDesk boundary map | `checkpoint/sec-01` |
-| SEC-02 onwards | Announced per section as the course progresses | — |
+| Section | Focus | Checkpoint | Worksheet |
+| --- | --- | --- | --- |
+| SEC-01 | Threat model & the TrustDesk boundary map | `checkpoint/sec-01` | `exercises/sec-01-boundary-map` |
+| SEC-02 | GenAI foundations for Java developers | `checkpoint/sec-02` | — |
+| SEC-03 | First Spring AI application | `checkpoint/sec-03` | `exercises/sec-03-chat-endpoint` |
+| SEC-04 | Prompt templates, typed replies, fail-closed parsing | `checkpoint/sec-04` | `exercises/sec-04` |
+| SEC-05 | Tools and deterministic agent workflows | `checkpoint/sec-05` | `exercises/sec-05` |
+| SEC-06 | Domain records, knowledge base, audit trail | `checkpoint/sec-06` | `exercises/sec-06` |
+| SEC-07 | Production RAG: ingestion, scoped retrieval, cited answers | `checkpoint/sec-07` | `exercises/sec-07` |
+| SEC-08 | Identity with Spring Security: sessions, JWT, delegation | `checkpoint/sec-08` | `exercises/sec-08` |
+| SEC-09 | MCP with Java and Spring AI | `checkpoint/sec-09` | `exercises/sec-09` |
+| SEC-10 | Secure agent authorization: policy, decisions, grants | `checkpoint/sec-10` | `exercises/sec-10` |
+| SEC-11 | Prompt-injection defence | `checkpoint/sec-11` | `exercises/sec-11` |
+| SEC-12 | Human approval and safe execution | `checkpoint/sec-12` | `exercises/sec-12` |
+| SEC-13 | Testing and evaluation | `checkpoint/sec-13` | `exercises/sec-13` |
+| SEC-14 | Observability and production operations | `checkpoint/sec-14` | `exercises/sec-14` |
+| SEC-15 | Deployment and final security review | `checkpoint/sec-15` | `exercises/sec-15` |
 
-The checkpoint list grows with the course; each new section's lecture tells
-you exactly which branch to use.
+Each checkpoint contains the completed application at the end of that
+section, with its full offline test suite green (`./mvnw test` needs no API
+key and no network). From SEC-13 the suite includes the shared test fixtures
+(`testing/`), from SEC-14 the observability package, and from SEC-15 the
+production profile, deployment descriptors, and dependency lock under
+`deploy/`.
 
 — Vivek Singh · [Prompt Vidya AI](https://www.youtube.com/@PromptVidyaAI)
